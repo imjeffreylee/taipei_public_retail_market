@@ -5,3 +5,14 @@ table, h1 {
 th, td {
     width: 150px;
 }
+
+#price:hover, #date:hover {
+    cursor: pointer;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}

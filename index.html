@@ -7,7 +7,13 @@
     <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
-    <h1>臺北市公有零售市場行情</h1>
+    <div class="header">
+        <h1>臺北市公有零售市場行情</h1>
+        <div class="inputs">
+            <input type="text" id="input" placeholder="輸入關鍵字">
+            <input type="button" value="查詢" id="search">
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -20,6 +26,6 @@
         </thead>
         <tbody id="table-body"></tbody>
     </table>
-    <script src="js/main.js"></script>
 </body>
+<script src="js/main.js"></script>
 </html>
