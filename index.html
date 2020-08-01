@@ -4,8 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>臺北市公有零售市場行情</title>
+    <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
-    
+    <h1>臺北市公有零售市場行情</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>品名</th>
+                <th>市場</th>
+                <th id="price" data-col="price" data-order="asc">平均（元/公斤）</th>
+                <th>種類</th>
+                <th id="date" data-col="date" data-order="asc">日期</th>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+    <script src="js/main.js"></script>
 </body>
 </html>
