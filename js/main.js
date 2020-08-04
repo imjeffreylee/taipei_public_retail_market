@@ -1,18 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
     let results = [];
     let selected = [];
+    let current = [];
+    let start = 1;
     const price = document.getElementById("price");
     const date = document.getElementById("date");
     const input = document.getElementById("input");
     const searchBtn = document.getElementById("search");
+    const pages = document.getElementById("pages");
+    const clear = document.getElementById("clear");
     const URL = "https://data.taipei/api/v1/dataset/f4f80730-df59-44f9-bfb8-32c136b1ae68?scope=resourceAquire";
 
     const search = (val, results) => {
         if (val === "") {
-            renderTable(results);
             alert("沒有你要找的菜ㄟ歹勢");
             return;
         }
+
         selected = [];
         for (let i = 0; i < results.length; i++) {
             const name = results[i]["品名"];
@@ -21,9 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (selected.length) {
-            renderTable(selected);
+            createOptions(selected);
+            renderTable(selected, 1, 20);
         } else {
-            renderTable(results);
             alert("沒有你要找的菜ㄟ歹勢");
         }
     }
@@ -56,15 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
         }
-        renderTable(arrToSort);
+        renderTable(arrToSort, start, start + 19);
     };
     
     const getData = async () => {
-        const response = await fetch(URL + "&limit=20").catch(async () => {
+        const response = await fetch(URL).catch(async () => {
             await fetch("http://localhost:3000/api/veges");
         });
+
         const data = await response.json();
-        console.log(data)
         let rawData = data.result.results;
         for (vege of rawData) {
             let trimmed = JSON.parse(
@@ -72,13 +76,27 @@ document.addEventListener("DOMContentLoaded", () => {
             );
             results.push(trimmed);
         }
-        console.log(results);
+        
+        createOptions(results);
     }
 
-    const renderTable = (results) => {
+    const createOptions = collection => {
+        pages.innerHTML = "";
+        for (let i = 1; i <= collection.length; i += 20) {
+            let j = Math.min(i + 19, collection.length);
+            pages.innerHTML += `
+                <option>${i} - ${j}</option>
+            `;
+        }
+    }
+
+    const renderTable = (collection, start, end) => {
         const tableBody = document.getElementById("table-body");
         tableBody.innerHTML = "";
-        results.forEach((row) => {
+        current = [];
+        for (let i = start - 1; i < end; i++) {
+            const row = collection[i];
+            current.push(row);
             let rowToRender = `
                 <tr>
                     <td>${row["品名"]}</td>
@@ -89,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tr>
             `;
             tableBody.innerHTML += rowToRender;
-        })
+        }
     }
 
     price.addEventListener("click", (e) => {
@@ -111,8 +129,22 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         if (e.keyCode === 13) searchBtn.click();
     })
+
+    pages.addEventListener("change", e => {
+        e.preventDefault();
+        start = parseInt(e.target.value);
+        if (selected.length) renderTable(selected, start, start + 19);
+        else renderTable(results, start, start + 19);
+    });
+
+    clear.addEventListener("click", e => {
+        e.preventDefault();
+        input.value = "";
+        selected = [];
+        renderTable(results, 1, 20);
+    })
     
     getData().then(() => {
-        renderTable(results);
+        renderTable(results, start, start + 19);
     })
 })
