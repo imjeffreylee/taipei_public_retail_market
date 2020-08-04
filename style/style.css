@@ -2,6 +2,12 @@ table, h1 {
     text-align: center;
 }
 
+table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 th, td {
     width: 150px;
 }
