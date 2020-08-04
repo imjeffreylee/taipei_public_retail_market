@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const date = document.getElementById("date");
     const input = document.getElementById("input");
     const searchBtn = document.getElementById("search");
+    const URL = "https://data.taipei/api/v1/dataset/f4f80730-df59-44f9-bfb8-32c136b1ae68?scope=resourceAquire";
 
     const search = (val, results) => {
         if (val === "") {
@@ -59,10 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     
     const getData = async () => {
-        const response = await fetch(
-            "https://data.taipei/api/v1/dataset/f4f80730-df59-44f9-bfb8-32c136b1ae68?scope=resourceAquire&limit=10"
-        );
+        const response = await fetch(URL + "&limit=20").catch(async () => {
+            await fetch("http://localhost:3000/api/veges");
+        });
         const data = await response.json();
+        console.log(data)
         let rawData = data.result.results;
         for (vege of rawData) {
             let trimmed = JSON.parse(
