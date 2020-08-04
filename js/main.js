@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pages = document.getElementById("pages");
     const clear = document.getElementById("clear");
     const URL = "https://data.taipei/api/v1/dataset/f4f80730-df59-44f9-bfb8-32c136b1ae68?scope=resourceAquire";
+    const BACKUPURL = "http://localhost:3000/api/veges";
 
     const search = (val, results) => {
         if (val === "") {
@@ -64,20 +65,26 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     
     const getData = async () => {
-        const response = await fetch(URL).catch(async () => {
-            await fetch("http://localhost:3000/api/veges");
-        });
-
+        const response = await fetch(URL);
         const data = await response.json();
-        let rawData = data.result.results;
+        trimSpaces(data.result.results);
+        createOptions(results);
+    }
+
+    const getDataFromBackup = async () => {
+        const response = await fetch(BACKUPURL);
+        const data = await response.json();
+        trimSpaces(data.result.results);
+        createOptions(results);
+    };
+
+    const trimSpaces = rawData => {
         for (vege of rawData) {
             let trimmed = JSON.parse(
                 JSON.stringify(vege).replace(/"\s+|\s+"/g, '"')
             );
             results.push(trimmed);
         }
-        
-        createOptions(results);
     }
 
     const createOptions = collection => {
@@ -142,9 +149,10 @@ document.addEventListener("DOMContentLoaded", () => {
         input.value = "";
         selected = [];
         renderTable(results, 1, 20);
+        createOptions(results);
     })
-    
-    getData().then(() => {
-        renderTable(results, start, start + 19);
-    })
+
+    getData()
+        .then(() => renderTable(results, start, start + 19))
+        .catch(() => getDataFromBackup());
 })
